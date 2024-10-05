@@ -1,6 +1,7 @@
 #include <pspkernel.h>
 #include <pspgu.h>
 #include <pspdisplay.h>
+#include <pspctrl.h>
 
 
 // From the examples
@@ -86,7 +87,7 @@ typedef struct {
     short x, y, z;
 } Vertex;
 
-
+// TODO make it move
 void drawRect(float x, float y, float w, float h) {
 
     Vertex* vertices = (Vertex*)sceGuGetMemory(2 * sizeof(Vertex));
@@ -114,12 +115,36 @@ int main() {
     // Setup the library used for rendering
     initGu();
 
+    // TODO add controller inputs
+    SceCtrlData pad;
+
+    int x = 216;
+    int y = 96;
+
+    sceCtrlSetSamplingCycle(0);
+	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+
     // NOTE all the examples use a very primitive main loop
     isRunning = 1;
     while(isRunning) {
-        startFrame();
+        sceCtrlReadBufferPositive(&pad, 1);
+        if (pad.Buttons != 0) {
+            if (pad.Buttons & PSP_CTRL_RIGHT) {
+                x += 5;
+            } else if (pad.Buttons & PSP_CTRL_LEFT) {
+                x -= 5;
+            }
 
-        drawRect(216, 96, 34, 64);
+            if (pad.Buttons & PSP_CTRL_UP) {
+                y -= 5;
+            } else if (pad.Buttons & PSP_CTRL_DOWN) {
+                y += 5;
+            }
+        }
+
+        startFrame();         
+
+        drawRect(x, y, 34, 64);
 
         endFrame();
     }
