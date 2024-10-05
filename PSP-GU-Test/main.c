@@ -48,7 +48,7 @@ void initGu() {
     sceGuDispBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, (void*)0x88000, BUFFER_WIDTH);
     sceGuDepthBuffer((void*)0x110000, BUFFER_WIDTH);
 
-    //Set up "viewport"
+    // Set up "viewport"
     sceGuOffset(2048 - (SCREEN_WIDTH / 2), 2048 - (SCREEN_HEIGHT / 2));
     sceGuViewport(2048, 2048, SCREEN_WIDTH, SCREEN_HEIGHT);
     sceGuEnable(GU_SCISSOR_TEST);
@@ -63,3 +63,59 @@ void initGu() {
     sceGuDisplay(GU_TRUE);
 }
 
+void endGu() {
+    sceGuDisplay(GU_FALSE);
+    sceGuTerm(); // terminate
+}
+
+void startFrame() {
+    sceGuStart(GU_DIRECT, list);
+    sceGuClearColor(0xFFFFFFFF); // ABGR for white background 
+    sceGuClear(GU_COLOR_BUFFER_BIT);
+}
+
+void endFrame() {
+    sceGuFinish();
+    sceGuSync(0, 0);
+    sceDisplayWaitVblankStart();
+    sceGuSwapBuffers();
+}
+
+typedef struct {
+    unsigned short u, v;
+    short x, y, z;
+} Vertex;
+
+void drawRect(float x, float y, float w, float h) {
+
+    Vertex* vertices = (Vertex*)sceGuGetMemory(2 * sizeof(Vertex));
+
+    vertices[0].x = x;
+    vertices[0].y = y;
+
+    vertices[1].x = x + w;
+    vertices[1].y = y + h;
+
+    sceGuColor(0xFF00FF00); // Green
+    sceGuDrawArray(GU_SPRITES, GU_TEXTURE_16BIT | GU_VERTEX_16BIT | GU_TRANSFORM_2D, 2, 0, vertices);
+}
+
+
+int main() {
+    // Make exiting with the home button possible
+    setup_callbacks();
+
+    // Setup the library used for rendering
+    initGu();
+
+    isRunning = 1;
+    while(isRunning) {
+        startFrame();
+
+        drawRect(216, 96, 34, 64);
+
+        endFrame();
+    }
+
+    return 0;
+}
