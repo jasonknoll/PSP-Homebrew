@@ -86,6 +86,8 @@ typedef struct {
     short x, y, z;
 } Vertex;
 
+
+// TODO circle, triangle, ...
 void drawRect(float x, float y, float w, float h) {
 
     Vertex* vertices = (Vertex*)sceGuGetMemory(2 * sizeof(Vertex));
