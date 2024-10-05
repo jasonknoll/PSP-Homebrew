@@ -7,7 +7,12 @@ add_executable(${PROJECT_NAME} main.c)
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    ${SDL2_INCLUDE_DIRS}
+    pspdebug
+    pspdisplay
+    pspge
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${SDL2_LIBRARIES}
