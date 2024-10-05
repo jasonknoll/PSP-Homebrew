@@ -87,7 +87,6 @@ typedef struct {
 } Vertex;
 
 
-// TODO circle, triangle, ...
 void drawRect(float x, float y, float w, float h) {
 
     Vertex* vertices = (Vertex*)sceGuGetMemory(2 * sizeof(Vertex));
@@ -102,6 +101,11 @@ void drawRect(float x, float y, float w, float h) {
     sceGuDrawArray(GU_SPRITES, GU_TEXTURE_16BIT | GU_VERTEX_16BIT | GU_TRANSFORM_2D, 2, 0, vertices);
 }
 
+// TODO
+void drawTriangle() {}
+
+void drawCirlce() {}
+
 
 int main() {
     // Make exiting with the home button possible
@@ -110,6 +114,7 @@ int main() {
     // Setup the library used for rendering
     initGu();
 
+    // NOTE all the examples use a very primitive main loop
     isRunning = 1;
     while(isRunning) {
         startFrame();
