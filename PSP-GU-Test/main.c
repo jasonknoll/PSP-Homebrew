@@ -4,9 +4,14 @@
 #include <pspdisplay.h>
 #include <pspctrl.h>
 
+// PSP-GL
+#include <GLES/gl.h>
+#include <GLES/egl.h>
+
 #include <math.h>
 
-// TODO add pspGL 
+// TODO Draw shapes using both GL and GU and compare 
+// Then render some 3D shapes >:)
 
 // From the examples
 PSP_MODULE_INFO("PSP Graphics-Utility Test", 0, 1, 0);
@@ -18,8 +23,9 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT BUFFER_HEIGHT
 
+// NOTE do I need to un-attribute this later?? Some C stuff I usually forget to worry about?
 char list[0x20000] __attribute__((aligned(64)));
-// static unsigned int __attribute__((aligned(16))) list[26144]; // I have no clue what this is from the example
+//static unsigned int __attribute__((aligned(16))) list[26144]; // I have no clue what this is from the example
 //extern unsigned char logo_start[]; // idk something for the example logo
 int isRunning;
 
@@ -108,7 +114,11 @@ typedef struct {
 } CubeVertex;
 
 // TODO add vertex array
-//struct CubeVertex __attribute__((aligned(16))) vertices[12*3];
+CubeVertex __attribute__((aligned(16))) vertices[12*3] = 
+{
+    {0, 0, 0xff7f0000, -1, -1, 1}, // u, v, color, x, y, z
+    {}
+}
 
 
 void drawRect(float x, float y, float w, float h) {
@@ -132,13 +142,12 @@ void drawCirlce() {}
 
 
 int main() {
-    // Make exiting with the home button possible
+    // Make exiting without crashing possible lol
     setup_callbacks();
 
     // Setup the library used for rendering
     initGu();
 
-    // TODO add controller inputs
     SceCtrlData pad;
 
     int x = 216;
@@ -147,7 +156,7 @@ int main() {
     sceCtrlSetSamplingCycle(0);
 	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
 
-    // NOTE all the examples use a very primitive main loop
+    // NOTE all the examples use a very primitive main loop 
     isRunning = 1;
     while(isRunning) {
         sceCtrlReadBufferPositive(&pad, 1);
