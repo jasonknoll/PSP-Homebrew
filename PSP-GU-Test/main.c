@@ -1,8 +1,12 @@
 #include <pspkernel.h>
 #include <pspgu.h>
+#include <pspgum.h>
 #include <pspdisplay.h>
 #include <pspctrl.h>
 
+#include <math.h>
+
+// TODO add pspGL 
 
 // From the examples
 PSP_MODULE_INFO("PSP Graphics-Utility Test", 0, 1, 0);
@@ -15,6 +19,8 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
 #define SCREEN_HEIGHT BUFFER_HEIGHT
 
 char list[0x20000] __attribute__((aligned(64)));
+// static unsigned int __attribute__((aligned(16))) list[26144]; // I have no clue what this is from the example
+//extern unsigned char logo_start[]; // idk something for the example logo
 int isRunning;
 
 
@@ -25,6 +31,7 @@ int exit_callback(int arg1, int arg2, void *common) {
     return 0;
 }
 
+
 int callback_thread(SceSize args, void *argp) {
     int cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
     sceKernelRegisterExitCallback(cbid);
@@ -32,12 +39,14 @@ int callback_thread(SceSize args, void *argp) {
     return 0;
 }
 
+
 int setup_callbacks(void) {
     int thid = sceKernelCreateThread("update_thread", callback_thread, 0x11, 0xFA0, 0, 0);
     if(thid >= 0)
         sceKernelStartThread(thid, 0, 0);
     return thid;
 }
+
 
 void initGu() {
     sceGuInit();
@@ -64,16 +73,19 @@ void initGu() {
     sceGuDisplay(GU_TRUE);
 }
 
+
 void endGu() {
     sceGuDisplay(GU_FALSE);
     sceGuTerm(); // terminate
 }
+
 
 void startFrame() {
     sceGuStart(GU_DIRECT, list);
     sceGuClearColor(0xFFFFFFFF); // ABGR for white background 
     sceGuClear(GU_COLOR_BUFFER_BIT);
 }
+
 
 void endFrame() {
     sceGuFinish();
@@ -82,12 +94,23 @@ void endFrame() {
     sceGuSwapBuffers();
 }
 
+
 typedef struct {
     unsigned short u, v;
     short x, y, z;
 } Vertex;
 
-// TODO make it move
+// TODO implement the cube example
+typedef struct {
+    float u, v;
+    unsigned int color;
+    float x, y, z;
+} CubeVertex;
+
+// TODO add vertex array
+//struct CubeVertex __attribute__((aligned(16))) vertices[12*3];
+
+
 void drawRect(float x, float y, float w, float h) {
 
     Vertex* vertices = (Vertex*)sceGuGetMemory(2 * sizeof(Vertex));
@@ -128,6 +151,7 @@ int main() {
     isRunning = 1;
     while(isRunning) {
         sceCtrlReadBufferPositive(&pad, 1);
+        
         if (pad.Buttons != 0) {
             if (pad.Buttons & PSP_CTRL_RIGHT) {
                 x += 5;
