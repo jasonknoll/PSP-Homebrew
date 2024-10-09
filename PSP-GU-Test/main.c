@@ -4,10 +4,6 @@
 #include <pspdisplay.h>
 #include <pspctrl.h>
 
-// PSP-GL
-#include <GLES/gl.h>
-#include <GLES/egl.h>
-
 #include <math.h>
 
 // TODO Draw shapes using both GL and GU and compare 
