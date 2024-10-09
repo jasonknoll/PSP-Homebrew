@@ -2,7 +2,7 @@
 #include <pspctrl.h>
 #include <pspdisplay.h>
 #include <GLES/gl.h>
-#include <GHLES/egl.h>
+#include <GLES/egl.h>
 // #include <pspgu.h>
 // #include <pspgum.h>
 
