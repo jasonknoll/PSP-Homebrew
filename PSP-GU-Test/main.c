@@ -9,6 +9,8 @@
 // TODO Draw shapes using both GL and GU and compare 
 // Then render some 3D shapes >:)
 
+// sce == "Sony Computer Entertainment" I think
+
 // From the examples
 PSP_MODULE_INFO("PSP Graphics-Utility Test", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
@@ -20,8 +22,8 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
 #define SCREEN_HEIGHT BUFFER_HEIGHT
 
 // NOTE do I need to un-attribute this later?? Some C stuff I usually forget to worry about?
-char list[0x20000] __attribute__((aligned(64)));
-//static unsigned int __attribute__((aligned(16))) list[26144]; // I have no clue what this is from the example
+char __attribute__((aligned(64))) list[0x20000];
+static unsigned int __attribute__((aligned(16))) cubeList[26144]; // cube example used this one
 //extern unsigned char logo_start[]; // idk something for the example logo
 int isRunning;
 
@@ -51,14 +53,19 @@ int setup_callbacks(void) {
 
 
 void initGu() {
+    void* fbp0 = guGetStaticVramBuffer(BUFFER_WIDTH,SCREEN_HEIGHT,GU_PSM_8888);
+	void* fbp1 = guGetStaticVramBuffer(BUFFER_WIDTH,SCREEN_HEIGHT,GU_PSM_8888);
+	void* zbp = guGetStaticVramBuffer(BUFFER_WIDTH,SCREEN_HEIGHT,GU_PSM_4444);
+
     sceGuInit();
 
     // I gotta read the documentation man
     // These setup the buffers
+    //sceGuStart(GU_DIRECT, cubeList);
     sceGuStart(GU_DIRECT, list);
-    sceGuDrawBuffer(GU_PSM_8888, (void*)0, BUFFER_WIDTH);
-    sceGuDispBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, (void*)0x88000, BUFFER_WIDTH);
-    sceGuDepthBuffer((void*)0x110000, BUFFER_WIDTH);
+    sceGuDrawBuffer(GU_PSM_8888, fbp0, BUFFER_WIDTH);
+    sceGuDispBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, fbp1, BUFFER_WIDTH);
+    sceGuDepthBuffer(zbp, BUFFER_WIDTH);
 
     // Set up "viewport"
     sceGuOffset(2048 - (SCREEN_WIDTH / 2), 2048 - (SCREEN_HEIGHT / 2));
@@ -109,7 +116,7 @@ typedef struct {
     float x, y, z;
 } CubeVertex;
 
-// TODO add vertex array
+
 CubeVertex __attribute__((aligned(16))) vertices[12*3] = 
 {
     {0, 0, 0xff7f0000, -1, -1, 1}, // u, v, color, x, y, z
@@ -159,7 +166,7 @@ CubeVertex __attribute__((aligned(16))) vertices[12*3] =
     {0, 0, 0xff00007f,-1,-1,-1}, // 4
     {1, 1, 0xff00007f, 1,-1, 1}, // 6
     {0, 1, 0xff00007f, 1,-1,-1}, // 5
-}
+};
 
 
 void drawRect(float x, float y, float w, float h) {
@@ -174,6 +181,11 @@ void drawRect(float x, float y, float w, float h) {
 
     sceGuColor(0xFF00FF00); // Green
     sceGuDrawArray(GU_SPRITES, GU_TEXTURE_16BIT | GU_VERTEX_16BIT | GU_TRANSFORM_2D, 2, 0, vertices);
+}
+
+// TODO actually get this working
+void drawCube(CubeVertex* vertices) {
+    sceGumDrawArray(GU_TRIANGLES,GU_TEXTURE_32BITF|GU_COLOR_8888|GU_VERTEX_32BITF|GU_TRANSFORM_3D,12*3,0,vertices);
 }
 
 // TODO
