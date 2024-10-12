@@ -1,11 +1,15 @@
 #![no_std]
 #![no_main]
+extern crate alloc;
 
+use alloc::vec;
 use core::ffi::c_void;
-use psp::sys::{self, sceGuDisplay, sceGuEnable, SceCtrlData, ClearBuffer, DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode, TexturePixelFormat, CtrlMode};
+use psp::sys::{self, sceGuDisplay, sceGuEnable, SceCtrlData, ClearBuffer, DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode, TexturePixelFormat, CtrlMode, sceGuDrawArray, sceGuGetMemory, GuPrimitive, VertexType, ThreadAttributes, SceKernelThreadOptParam};
 use psp::vram_alloc::get_vram_allocator;
 use psp::{BUF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH};
 use psp::sys::DepthFunc::Equal;
+use core::mem;
+
 
 psp::module!("sample_module", 1, 0);
 
@@ -22,7 +26,6 @@ fn psp_main() {
     psp::enable_home_button();
 
 
-
     // spooky
     unsafe {
         init_gu();
@@ -35,7 +38,8 @@ fn psp_main() {
         loop {
             start_frame();
 
-            todo!("Need to draw rectangle vertices and control it with d-pad");
+            // todo debug this bs
+            draw_rect(216.0, 96.0, 34.0, 64.0);
 
             end_frame();
         }
@@ -90,9 +94,42 @@ unsafe fn end_frame() {
     sys::sceGuSwapBuffers();
 }
 
-unsafe fn draw_rect() {
-    todo!()
+// Define the Vertex struct with the appropriate field types
+#[repr(C)]
+struct Vertex {
+    u: u16,
+    v: u16,
+    x: i16,
+    y: i16,
+    z: i16,
 }
+
+// Function to draw a rectangle using two vertices
+fn draw_rect(x: f32, y: f32, w: f32, h: f32) {
+    // Allocate memory for two vertices
+    let vertices: *mut Vertex = unsafe {
+        sceGuGetMemory((2 * mem::size_of::<Vertex>()) as i32) as *mut Vertex
+    };
+
+    unsafe {
+        // Set the top-left vertex
+        (*vertices).x = x as i16;
+        (*vertices).y = y as i16;
+        (*vertices).u = 0;
+        (*vertices).v = 0;
+
+        // Set the bottom-right vertex
+        (*vertices.add(1)).x = (x + w) as i16;
+        (*vertices.add(1)).y = (y + h) as i16;
+        (*vertices.add(1)).u = w as u16;
+        (*vertices.add(1)).v = h as u16;
+
+        // Set the color (ARGB format) and draw the array
+        sys::sceGuColor(0xFF00FF00); // Green
+        sceGuDrawArray(GuPrimitive::Sprites, VertexType::VERTEX_16BIT, 2, *core::ptr::null(), vertices as *const _);
+    }
+}
+
 
 unsafe fn draw_cube() {
     todo!()
