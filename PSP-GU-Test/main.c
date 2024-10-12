@@ -23,8 +23,6 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
 
 // NOTE do I need to un-attribute this later?? Some C stuff I usually forget to worry about?
 char __attribute__((aligned(64))) list[0x20000];
-static unsigned int __attribute__((aligned(16))) cubeList[26144]; // cube example used this one
-//extern unsigned char logo_start[]; // idk something for the example logo
 int isRunning;
 
 
@@ -109,65 +107,6 @@ typedef struct {
     short x, y, z;
 } Vertex;
 
-// TODO implement the cube example
-typedef struct {
-    float u, v;
-    unsigned int color;
-    float x, y, z;
-} CubeVertex;
-
-
-CubeVertex __attribute__((aligned(16))) vertices[12*3] = 
-{
-    {0, 0, 0xff7f0000, -1, -1, 1}, // u, v, color, x, y, z
-    {1, 0, 0xff7f0000,-1, 1, 1}, // 4
-    {1, 1, 0xff7f0000, 1, 1, 1}, // 5
-
-    {0, 0, 0xff7f0000,-1,-1, 1}, // 0
-    {1, 1, 0xff7f0000, 1, 1, 1}, // 5
-    {0, 1, 0xff7f0000, 1,-1, 1}, // 1
-
-    {0, 0, 0xff7f0000,-1,-1,-1}, // 3
-    {1, 0, 0xff7f0000, 1,-1,-1}, // 2
-    {1, 1, 0xff7f0000, 1, 1,-1}, // 6
-
-    {0, 0, 0xff7f0000,-1,-1,-1}, // 3
-    {1, 1, 0xff7f0000, 1, 1,-1}, // 6
-    {0, 1, 0xff7f0000,-1, 1,-1}, // 7
-
-    {0, 0, 0xff007f00, 1,-1,-1}, // 0
-    {1, 0, 0xff007f00, 1,-1, 1}, // 3
-    {1, 1, 0xff007f00, 1, 1, 1}, // 7
-
-    {0, 0, 0xff007f00, 1,-1,-1}, // 0
-    {1, 1, 0xff007f00, 1, 1, 1}, // 7
-    {0, 1, 0xff007f00, 1, 1,-1}, // 4
-
-    {0, 0, 0xff007f00,-1,-1,-1}, // 0
-    {1, 0, 0xff007f00,-1, 1,-1}, // 3
-    {1, 1, 0xff007f00,-1, 1, 1}, // 7
-
-    {0, 0, 0xff007f00,-1,-1,-1}, // 0
-    {1, 1, 0xff007f00,-1, 1, 1}, // 7
-    {0, 1, 0xff007f00,-1,-1, 1}, // 4
-
-    {0, 0, 0xff00007f,-1, 1,-1}, // 0
-    {1, 0, 0xff00007f, 1, 1,-1}, // 1
-    {1, 1, 0xff00007f, 1, 1, 1}, // 2
-
-    {0, 0, 0xff00007f,-1, 1,-1}, // 0
-    {1, 1, 0xff00007f, 1, 1, 1}, // 2
-    {0, 1, 0xff00007f,-1, 1, 1}, // 3
-
-    {0, 0, 0xff00007f,-1,-1,-1}, // 4
-    {1, 0, 0xff00007f,-1,-1, 1}, // 7
-    {1, 1, 0xff00007f, 1,-1, 1}, // 6
-
-    {0, 0, 0xff00007f,-1,-1,-1}, // 4
-    {1, 1, 0xff00007f, 1,-1, 1}, // 6
-    {0, 1, 0xff00007f, 1,-1,-1}, // 5
-};
-
 
 void drawRect(float x, float y, float w, float h) {
 
@@ -181,11 +120,6 @@ void drawRect(float x, float y, float w, float h) {
 
     sceGuColor(0xFF00FF00); // Green
     sceGuDrawArray(GU_SPRITES, GU_TEXTURE_16BIT | GU_VERTEX_16BIT | GU_TRANSFORM_2D, 2, 0, vertices);
-}
-
-// TODO actually get this working
-void drawCube(CubeVertex* vertices) {
-    sceGumDrawArray(GU_TRIANGLES,GU_TEXTURE_32BITF|GU_COLOR_8888|GU_VERTEX_32BITF|GU_TRANSFORM_3D,12*3,0,vertices);
 }
 
 // TODO
