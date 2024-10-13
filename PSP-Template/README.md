@@ -15,5 +15,5 @@ Now load the `*.PBP` file in an emulator
 
 ## Resources
 
-[SDK Documentation](https://pspdev.github.io/pspsdk/index.html)
+[SDK Documentation](https://pspdev.github.io/pspsdk/index.html) <br>
 [Quick help](https://pspdev.github.io/tips_tricks.html)
