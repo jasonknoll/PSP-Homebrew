@@ -6,7 +6,7 @@ Boilerplate to get a PSP project up and running
 
 Follow the basic installation steps on: https://pspdev.github.io/installation.html
 
-Make sure to have the `PSPSDK` environment variable set
+Make sure to have the `PSPDEV` environment variable set 
 
 Navigate to /build and type `psp-cmake ..` in a WSL/Linux shell
 Type `make`
