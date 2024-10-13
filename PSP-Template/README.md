@@ -8,8 +8,8 @@ Follow the basic installation steps on [the PSPSDK site](https://pspdev.github.i
 
 Make sure to have the `PSPDEV` environment variable set 
 
-Navigate to /build and type `psp-cmake ..` in a WSL/Linux shell
-Type `make`
+Navigate to `/build` and type `psp-cmake ..` in a WSL/Linux shell
+Then enter `make`
 
 Now load the `*.PBP` file in an emulator
 
