@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(template)
+
+add_executable(${PROJECT_NAME} main.c)
+
+# Add various SDK Modules
+# PSP package index: https://pspdev.github.io/psp-packages/
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    pspgu
+    pspgum
+    pspge
+    pspdisplay
+    pspctrl
+)
+
+# Create an EBOOT.PBP file
+create_pbp_file(
+    TARGET ${PROJECT_NAME}
+    ICON_PATH NULL
+    BACKGROUND_PATH NULL
+    PREVIEW_PATH NULL
+    TITLE ${PROJECT_NAME}
+    VERSION 01.00
+)
